@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChilliSource.Cloud.DryIoc", "ChilliSource.Cloud.DryIoc\ChilliSource.Cloud.DryIoc.csproj", "{C7A4B610-06D1-47B0-934C-A3A086ACC06C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChilliSource.Cloud.DryIoc.Tests", "ChilliSource.Cloud.DryIoc.Tests\ChilliSource.Cloud.DryIoc.Tests.csproj", "{A0393C31-BC15-4A3D-B5EE-C5ADCF42A243}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C7A4B610-06D1-47B0-934C-A3A086ACC06C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7A4B610-06D1-47B0-934C-A3A086ACC06C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7A4B610-06D1-47B0-934C-A3A086ACC06C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7A4B610-06D1-47B0-934C-A3A086ACC06C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0393C31-BC15-4A3D-B5EE-C5ADCF42A243}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0393C31-BC15-4A3D-B5EE-C5ADCF42A243}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0393C31-BC15-4A3D-B5EE-C5ADCF42A243}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0393C31-BC15-4A3D-B5EE-C5ADCF42A243}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>ChilliSource.Cloud.DryIoc</id>
+    <version>$version$</version>
+    <title>ChilliSource Cloud DryIoc</title>
+    <description>DryIoc Library for ChilliSource.Cloud framework</description>
+    <authors>$authors$</authors>
+    <owners>$owners$</owners>
+    <requireLicenseAcceptance>$requireLicenseAcceptance$</requireLicenseAcceptance>
+    <copyright>$copyright$</copyright>
+    <projectUrl>$projectUrl$</projectUrl>
+    <licenseUrl>$licenceUrl$</licenseUrl>
+    <releaseNotes>$releaseNotes$</releaseNotes>
+    <tags>$tags$</tags>
+    <dependencies>
+      <dependency id="Serilog" version="2.4.0" />
+      <dependency id="ChilliSource.Cloud.Core" version="1.0.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src/ChilliSource.Cloud.DryIoc/bin/Release/net461/ChilliSource.Cloud.DryIoc.dll" target="lib\net461" />
+    <file src="src/ChilliSource.Cloud.DryIoc/bin/Release/net461/ChilliSource.Cloud.DryIoc.xml" target="lib\net461" />
+    <file src="src/ChilliSource.Cloud.DryIoc/bin/Release/net461/ChilliSource.Cloud.DryIoc.pdb" target="lib\net461" />
+    <file src="src/ChilliSource.Cloud.DryIoc/bin/Release/net462/ChilliSource.Cloud.DryIoc.dll" target="lib\net462" />
+    <file src="src/ChilliSource.Cloud.DryIoc/bin/Release/net462/ChilliSource.Cloud.DryIoc.xml" target="lib\net462" />
+    <file src="src/ChilliSource.Cloud.DryIoc/bin/Release/net462/ChilliSource.Cloud.DryIoc.pdb" target="lib\net462" />
+  </files>
+</package>

@@ -1,0 +1,14 @@
+{
+	"productName" : "ChilliSource Cloud DryIoc",
+	"projectName" : "ChilliSource.Cloud.DryIoc",
+	"githubOwner": "BlueChilli",
+	"githubRepository": "ChilliSource.Cloud.DryIoc",
+	"packageWhiteList": ["ChilliSource.Cloud.DryIoc"],
+	"solutionFile" : "../src/ChilliSource.Cloud.DryIoc.sln",
+	"tags": [ "ChilliSource", "ChilliSource Cloud DryIoc"],
+	"authors" : ["Blue Chilli Technology Pty Ltd"],
+	"copyright" : "Copyright Blue Chilli Technology Pty Ltd 2017",
+	"iconUrl": "https://avatars0.githubusercontent.com/u/5924219?v=3&s=200",
+	"testProjectPath": "../src/ChilliSource.Cloud.DryIoc.Tests/ChilliSource.Cloud.DryIoc.Tests.csproj",
+	"nuspecRootPath" : "../"
+}
