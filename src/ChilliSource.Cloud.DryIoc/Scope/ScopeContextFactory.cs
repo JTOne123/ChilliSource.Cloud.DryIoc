@@ -14,25 +14,33 @@ namespace ChilliSource.Cloud.DryIoc
 
         public ScopeContextFactory()
         {
+            var thisFactory = this;
+
             _container = new Container();
             _singletonTypes = new HashSet<Type>();
 
-            _container.RegisterDelegate<ScopeContextFactory>(resolver => this, Reuse.InCurrentScope);
+            _container.RegisterDelegate<ScopeValidation>(resolver => new ScopeValidation(thisFactory), Reuse.InCurrentScope);
             _container.Register<InScopeValuesHolder>(Reuse.InCurrentScope);
 
-            _container.RegisterDelegate<Core.IResolver>(resolver => new DryIocDependecyResolver(resolver), Reuse.InCurrentScope);
+            //preventDisposal -> ScopeContext.Dispose will be called by the client, and should not be called again from the scope dipose itself.
+            _container.RegisterDelegate<ScopeContext>(resolver => new ScopeContext(), Reuse.InCurrentScope);
+            _container.RegisterDelegate<Core.IResolver>(resolver => resolver.Resolve<ScopeContext>(), Reuse.InCurrentScope);
         }
 
         public Core.IScopeContext CreateScope()
         {
-            return new ScopeContext(_container.OpenScope(Guid.NewGuid()));
+            var scope = _container.OpenScope();
+            var scopeContext = scope.Resolve<ScopeContext>();
+            scopeContext.Scope = scope;
+
+            return scopeContext;
         }
 
         public void RegisterSingletonType(Type type)
         {
             _singletonTypes.Add(type);
 
-            _container.RegisterDelegate(type, (resolver) => resolver.Resolve<InScopeValuesHolder>().GetSingletonValue(type));
+            _container.RegisterDelegate(type, (resolver) => resolver.Resolve<InScopeValuesHolder>().GetSingletonValue(type), Reuse.InCurrentScope);
         }
 
         public void RegisterServices(ScopeContextHelper.RegisterServices registerServicesAction)
@@ -55,6 +63,20 @@ namespace ChilliSource.Cloud.DryIoc
 
             disposed = true;
             _container.Dispose();
+        }
+    }
+
+    internal class ScopeValidation
+    {
+        ScopeContextFactory _factory;
+        public ScopeValidation(ScopeContextFactory factory)
+        {
+            _factory = factory;
+        }
+
+        internal void ValidateSingletonType(Type type)
+        {
+            _factory.ValidateSingletonType(type);
         }
     }
 }
