@@ -9,25 +9,26 @@ namespace ChilliSource.Cloud.DryIoc
 {
     internal class ScopeContext : Core.IScopeContext
     {
-        internal IContainer Scope { get; set; }
+        private IContainer _scope;
 
-        public ScopeContext()
+        public ScopeContext(IContainer scope)
         {
+            _scope = scope;
         }
 
         public T Get<T>()
         {
-            return Scope.Resolve<T>(ifUnresolved: IfUnresolved.ReturnDefault);
+            return _scope.Resolve<T>();
         }
 
         public T GetSingletonValue<T>()
         {
-            return (T)Scope.Resolve<InScopeValuesHolder>().GetSingletonValue(typeof(T));
+            return (T)_scope.Resolve<InScopeValuesHolder>().GetSingletonValue(typeof(T));
         }
 
         public void SetSingletonValue<T>(T value)
         {
-            Scope.Resolve<InScopeValuesHolder>().SetSingletonValue(typeof(T), value);
+            _scope.Resolve<InScopeValuesHolder>().SetSingletonValue(typeof(T), value);
         }
 
         bool disposed = false;
@@ -37,7 +38,7 @@ namespace ChilliSource.Cloud.DryIoc
                 return;
 
             disposed = true;
-            Scope.Dispose();
+            _scope.Dispose();
         }
     }
 }

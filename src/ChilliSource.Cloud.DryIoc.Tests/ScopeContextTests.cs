@@ -36,12 +36,14 @@ namespace ChilliSource.Cloud.DryIoc.Tests
         public void TestSimpleService()
         {
             MyServiceB.DoStuffCount = 0;
-            scopeContextFactory.Execute<MyServiceB>(svc =>
+            using (var scope = scopeContextFactory.CreateScope())
             {
+                var svc = scope.Get<MyServiceB>();
+
                 svc.DoStuff();
 
                 Assert.True(MyServiceB.DoStuffCount == 1);
-            });
+            }
         }
 
         [Fact]
@@ -164,11 +166,6 @@ namespace ChilliSource.Cloud.DryIoc.Tests
         {
             public static int DisposedCount;
             public static int DoStuffCount;
-
-            public MyServiceB(CustomValue value)
-            {
-
-            }
 
             public void Dispose()
             {

@@ -22,25 +22,20 @@ namespace ChilliSource.Cloud.DryIoc
             _container.RegisterDelegate<ScopeValidation>(resolver => new ScopeValidation(thisFactory), Reuse.InCurrentScope);
             _container.Register<InScopeValuesHolder>(Reuse.InCurrentScope);
 
-            //preventDisposal -> ScopeContext.Dispose will be called by the client, and should not be called again from the scope dipose itself.
-            _container.RegisterDelegate<ScopeContext>(resolver => new ScopeContext(), Reuse.InCurrentScope);
-            _container.RegisterDelegate<Core.IResolver>(resolver => resolver.Resolve<ScopeContext>(), Reuse.InCurrentScope);
+            _container.RegisterDelegate<Core.IResolver>(resolver => new DryIocDependecyResolver(resolver), Reuse.InCurrentScope);
         }
 
         public Core.IScopeContext CreateScope()
         {
-            var scope = _container.OpenScope();
-            var scopeContext = scope.Resolve<ScopeContext>();
-            scopeContext.Scope = scope;
-
-            return scopeContext;
+            return new ScopeContext(_container.OpenScope());
         }
 
         public void RegisterSingletonType(Type type)
         {
             _singletonTypes.Add(type);
+            var singletonRegistration = (ISingletonRegistration)Activator.CreateInstance(typeof(SingletonRegistration<>).MakeGenericType(type));
 
-            _container.RegisterDelegate(type, (resolver) => resolver.Resolve<InScopeValuesHolder>().GetSingletonValue(type), Reuse.InCurrentScope);
+            singletonRegistration.RegisterInContainer(_container);
         }
 
         public void RegisterServices(ScopeContextHelper.RegisterServices registerServicesAction)
@@ -63,6 +58,25 @@ namespace ChilliSource.Cloud.DryIoc
 
             disposed = true;
             _container.Dispose();
+        }
+    }
+
+    internal interface ISingletonRegistration
+    {
+        void RegisterInContainer(IContainer container);
+    }
+    internal class SingletonRegistration<T> : ISingletonRegistration
+    {
+        private static readonly Type _singletonType = typeof(T);
+
+        public void RegisterInContainer(IContainer container)
+        {
+            container.RegisterDelegate<T>(ResolveSingletonValue, Reuse.InCurrentScope);
+        }
+
+        public T ResolveSingletonValue(IResolver resolver)
+        {
+            return (T)resolver.Resolve<InScopeValuesHolder>().GetSingletonValue(_singletonType);
         }
     }
 
