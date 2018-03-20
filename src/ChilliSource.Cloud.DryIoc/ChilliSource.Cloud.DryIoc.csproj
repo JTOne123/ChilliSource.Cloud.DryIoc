@@ -29,8 +29,7 @@
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
     <PackageReference Include="DryIoc.dll" Version="2.10.7" />
-    <PackageReference Include="Serilog" Version="2.4.0" />
-    <PackageReference Include="ChilliSource.Cloud.Core" Version="1.0.0" />
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="1.0.1-alpha0021" />
   </ItemGroup>
 
   <ItemGroup>

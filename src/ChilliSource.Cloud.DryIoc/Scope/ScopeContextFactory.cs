@@ -22,7 +22,7 @@ namespace ChilliSource.Cloud.DryIoc
             _container.RegisterDelegate<ScopeValidation>(resolver => new ScopeValidation(thisFactory), Reuse.InCurrentScope);
             _container.Register<InScopeValuesHolder>(Reuse.InCurrentScope);
 
-            _container.RegisterDelegate<Core.IResolver>(resolver => new DryIocDependecyResolver(resolver), Reuse.InCurrentScope);
+            _container.RegisterDelegate<Core.IServiceResolver>(resolver => new DryIocDependecyResolver(resolver), Reuse.InCurrentScope);
         }
 
         public Core.IScopeContext CreateScope()
