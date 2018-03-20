@@ -137,9 +137,9 @@ namespace ChilliSource.Cloud.DryIoc.Tests
             MyServiceB _service2;
             public CustomValue CustomValue { get; private set; }
 
-            public Core.IResolver Resolver { get; private set; }
+            public Core.IServiceResolver Resolver { get; private set; }
 
-            public MyServiceA(MyServiceB service2, Core.IResolver resolver, CustomValue value)
+            public MyServiceA(MyServiceB service2, Core.IServiceResolver resolver, CustomValue value)
             {
                 _service2 = service2;
                 CustomValue = value;
