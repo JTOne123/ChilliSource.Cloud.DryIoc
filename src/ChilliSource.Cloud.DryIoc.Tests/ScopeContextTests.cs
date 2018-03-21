@@ -3,6 +3,7 @@ using DryIoc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +31,9 @@ namespace ChilliSource.Cloud.DryIoc.Tests
         {
             container.Register<MyServiceA>(reuse);
             container.Register<MyServiceB>(reuse);
+
+            var properties = PropertiesAndFields.All(withInfo: ServiceCHelperInfo.GetInfo);
+            container.Register<MyServiceC>(reuse, made: Made.Of(propertiesAndFields: properties));
         }
 
         [Fact]
@@ -125,6 +129,33 @@ namespace ChilliSource.Cloud.DryIoc.Tests
             signal.WaitOne();
         }
 
+        [Fact]
+        public void TestPropertySelector()
+        {
+            ServiceCHelperInfo.GetInfoCalls = 0;
+
+            using (var scope = scopeContextFactory.CreateScope())
+            {
+                var svc = scope.Get<MyServiceC>();
+                Assert.True(svc != null);
+                Assert.True(svc.ServiceA != null);
+
+                Assert.True(ServiceCHelperInfo.GetInfoCalls == 1);
+                var svc2 = scope.Get<MyServiceC>();
+
+                Assert.True(Object.ReferenceEquals(svc, svc2));
+                Assert.True(ServiceCHelperInfo.GetInfoCalls == 1);
+            }
+
+            using (var anotherScope = scopeContextFactory.CreateScope())
+            {
+                var anotherSvc = anotherScope.Get<MyServiceC>();
+                Assert.True(anotherSvc != null);
+
+                Assert.True(ServiceCHelperInfo.GetInfoCalls == 1);
+            }
+        }
+
         public void Dispose()
         {
             scopeContextFactory.Dispose();
@@ -177,5 +208,35 @@ namespace ChilliSource.Cloud.DryIoc.Tests
                 DoStuffCount++;
             }
         }
+
+        public class MyServiceC
+        {
+            public MyServiceA ServiceA { get; set; }
+
+            internal void DoStuff()
+            {
+            }
+        }
+
+        public static class ServiceCHelperInfo
+        {
+            static int _getInfoCalls;
+            public static int GetInfoCalls { get { return _getInfoCalls; } set { _getInfoCalls = value; } }
+
+            internal static PropertyOrFieldServiceInfo GetInfo(MemberInfo member, Request request)
+            {
+                if ((member as PropertyInfo)?.PropertyType == typeof(MyServiceA))
+                {
+                    Interlocked.Increment(ref _getInfoCalls);
+
+                    return PropertyOrFieldServiceInfo.Of(member);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
     }
 }
