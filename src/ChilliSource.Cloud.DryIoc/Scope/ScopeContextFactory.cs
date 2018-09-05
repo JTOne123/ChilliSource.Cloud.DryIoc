@@ -16,7 +16,7 @@ namespace ChilliSource.Cloud.DryIoc
         {
             var thisFactory = this;
 
-            _container = new Container();
+            _container = new Container(rules => rules.WithCaptureContainerDisposeStackTrace());
             _singletonTypes = new HashSet<Type>();
 
             _container.RegisterDelegate<ScopeValidation>(resolver => new ScopeValidation(thisFactory), Reuse.InCurrentScope);
@@ -27,7 +27,7 @@ namespace ChilliSource.Cloud.DryIoc
 
         public Core.IScopeContext CreateScope()
         {
-            return new ScopeContext(_container.OpenScope());
+            return new ScopeContext(_container.OpenScope(configure: rules => rules.WithCaptureContainerDisposeStackTrace()));
         }
 
         public void RegisterSingletonType(Type type)

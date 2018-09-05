@@ -27,10 +27,19 @@ namespace ChilliSource.Cloud.DryIoc.Tests
             binder.RegisterSingletonType(typeof(CustomValue));
         }
 
+        private static PropertyOrFieldServiceInfo WithInfo(MemberInfo member, Request request)
+        {
+            var isInjectable = member.GetCustomAttributes(typeof(ServiceInjectionAttribute), false).Length > 0;
+
+            return isInjectable ? PropertyOrFieldServiceInfo.Of(member) : null;
+        }
+
         private void RegisterServices(IContainer container, IReuse reuse)
         {
-            container.Register<MyServiceA>(reuse);
-            container.Register<MyServiceB>(reuse);
+            var propertyResolution = PropertiesAndFields.All(withNonPublic: true, withPrimitive: false, withFields: false, ifUnresolved: IfUnresolved.ReturnDefault, withInfo: WithInfo);
+
+            container.Register<MyServiceA>(reuse, Made.Of(propertiesAndFields: propertyResolution));
+            container.Register<MyServiceB>(reuse, Made.Of(propertiesAndFields: propertyResolution));
 
             var properties = PropertiesAndFields.All(withInfo: ServiceCHelperInfo.GetInfo);
             container.Register<MyServiceC>(reuse, made: Made.Of(propertiesAndFields: properties));
@@ -47,6 +56,30 @@ namespace ChilliSource.Cloud.DryIoc.Tests
                 svc.DoStuff();
 
                 Assert.True(MyServiceB.DoStuffCount == 1);
+            }
+        }
+
+        [Fact]
+        public void TestGCCollect()
+        {
+            Core.IScopeContext scope = null;
+
+            for (int i = 0; i < 10; i++)
+            {
+                scope = null;
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                MyServiceB.DoStuffCount = 0;
+                using (scope = scopeContextFactory.CreateScope())
+                {
+                    var svc = scope.Get<MyServiceB>();
+
+                    svc.DoStuff();
+
+                    Assert.True(MyServiceB.DoStuffCount == 1);
+                    svc = null;
+                }
             }
         }
 
@@ -166,15 +199,15 @@ namespace ChilliSource.Cloud.DryIoc.Tests
             public static int DisposedCount;
 
             MyServiceB _service2;
+            [ServiceInjection]
             public CustomValue CustomValue { get; private set; }
 
+            [ServiceInjection]
             public Core.IServiceResolver Resolver { get; private set; }
 
-            public MyServiceA(MyServiceB service2, Core.IServiceResolver resolver, CustomValue value)
+            public MyServiceA(MyServiceB service2)
             {
                 _service2 = service2;
-                CustomValue = value;
-                this.Resolver = resolver;
             }
 
             public void DoStuff()
