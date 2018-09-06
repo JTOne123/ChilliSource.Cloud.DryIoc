@@ -84,6 +84,35 @@ namespace ChilliSource.Cloud.DryIoc.Tests
         }
 
         [Fact]
+        public void TestDifferentScopes()
+        {
+            Core.IScopeContext scope1 = null, scope2 = null;
+            MyServiceA svc1, svc2;
+            CustomValue value1, value2;
+
+            try
+            {
+                scope1 = scopeContextFactory.CreateScope();
+                scope1.SetSingletonValue(new CustomValue() { Value = 100 });
+                svc1 = scope1.Get<MyServiceA>();
+                value1 = scope1.GetSingletonValue<CustomValue>();
+
+                scope2 = scopeContextFactory.CreateScope();
+                svc2 = scope2.Get<MyServiceA>();
+                value2 = scope2.GetSingletonValue<CustomValue>();
+
+                Assert.False(object.ReferenceEquals(scope1, scope2));
+                Assert.False(object.ReferenceEquals(svc1, svc2));
+                Assert.False(object.ReferenceEquals(value1, value2));
+            }
+            finally
+            {
+                if (scope1 != null) scope1.Dispose();
+                if (scope2 != null) scope2.Dispose();
+            }
+        }
+
+        [Fact]
         public void TestScopeContextInstances()
         {
             scopeContextFactory.Execute<MyServiceA>(svc =>
@@ -212,12 +241,21 @@ namespace ChilliSource.Cloud.DryIoc.Tests
 
             public void DoStuff()
             {
+                if (_disposed)
+                    throw new ObjectDisposedException("MyServiceA");
+
                 _service2.DoStuff();
             }
 
+            private bool _disposed;
             public void Dispose()
             {
                 DisposedCount++;
+
+                if (!_disposed)
+                {
+                    _disposed = true;
+                }
             }
         }
 
