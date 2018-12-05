@@ -218,6 +218,16 @@ namespace ChilliSource.Cloud.DryIoc.Tests
             }
         }
 
+        static int _limitValue;
+        [Fact]
+        public void TestIncrementLimit()
+        {
+            _limitValue = int.MaxValue;
+            var incremented = (uint) Interlocked.Increment(ref _limitValue);
+
+            Assert.True(incremented == (uint)int.MaxValue + (uint)1);
+        }
+
         public void Dispose()
         {
             scopeContextFactory.Dispose();

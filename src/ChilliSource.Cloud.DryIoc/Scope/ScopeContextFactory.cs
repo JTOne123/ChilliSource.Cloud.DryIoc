@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ChilliSource.Cloud.DryIoc
@@ -11,12 +12,15 @@ namespace ChilliSource.Cloud.DryIoc
     {
         private Container _container;
         private HashSet<Type> _singletonTypes;
+        private static int _scopeCount;
 
         public ScopeContextFactory()
         {
             var thisFactory = this;
 
-            _container = new Container(rules => rules.WithCaptureContainerDisposeStackTrace());
+            _scopeCount = 0;
+            _container = new Container(configure: rules => rules.WithImplicitRootOpenScope()
+                                                                .WithCaptureContainerDisposeStackTrace());
             _singletonTypes = new HashSet<Type>();
 
             _container.RegisterDelegate<ScopeValidation>(resolver => new ScopeValidation(thisFactory), Reuse.InCurrentScope);
@@ -27,7 +31,8 @@ namespace ChilliSource.Cloud.DryIoc
 
         public Core.IScopeContext CreateScope()
         {
-            return new ScopeContext(_container.OpenScope(configure: rules => rules.WithCaptureContainerDisposeStackTrace()));
+            var scopeNumber = (uint)Interlocked.Increment(ref _scopeCount);
+            return new ScopeContext(_container.OpenScope($"scope_{scopeNumber}", configure: rules => rules.WithCaptureContainerDisposeStackTrace()));
         }
 
         public void RegisterSingletonType(Type type)
