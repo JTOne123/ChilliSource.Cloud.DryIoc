@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ChilliSource.Cloud.DryIoc
 {
-    public class DryIocDependecyResolver : ChilliSource.Cloud.Core.IResolver
+    public class DryIocDependecyResolver : ChilliSource.Cloud.Core.IServiceResolver
     {
         IResolver _inner;
         public DryIocDependecyResolver(IResolver inner)

@@ -9,17 +9,17 @@ namespace ChilliSource.Cloud.DryIoc
     internal class InScopeValuesHolder
     {
         private Dictionary<Type, object> _singletonObjects;
-        private ScopeContextFactory _factory;
+        private ScopeValidation _scopeValidation;
 
-        public InScopeValuesHolder(ScopeContextFactory factory)
+        public InScopeValuesHolder(ScopeValidation scopeValidation)
         {
             _singletonObjects = new Dictionary<Type, object>();
-            _factory = factory;
+            _scopeValidation = scopeValidation;
         }
 
         public object GetSingletonValue(Type type)
         {
-            _factory.ValidateSingletonType(type);
+            _scopeValidation.ValidateSingletonType(type);
 
             object value = null;
             _singletonObjects.TryGetValue(type, out value);
@@ -29,7 +29,7 @@ namespace ChilliSource.Cloud.DryIoc
 
         public void SetSingletonValue(Type type, object value)
         {
-            _factory.ValidateSingletonType(type);
+            _scopeValidation.ValidateSingletonType(type);
 
             if (value != null && !type.IsAssignableFrom(value.GetType()))
             {
